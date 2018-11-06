@@ -30,7 +30,9 @@ func Authorization() (*common.RespToken, string, error) {
 	url := config.AUTH_URL + "/auth/tokens"
 	logging.LOG.Infof("The keystone auth url is %s\n", url)
 
-	resp, err := common.Post(url, common.HEADERS, &auth_json)
+	headers := common.HEADERS
+	headers[common.CONTENT_TYPE] = common.APPLICATION_JSON
+	resp, err := merak.Post(url, headers, &auth_json)
 	if nil != err {
 		logging.LOG.Errorf("Unexpected Error occured:%v\n", err)
 		return nil, "", err

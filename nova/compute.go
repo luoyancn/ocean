@@ -36,6 +36,7 @@ func baseUrl(context *common.RespToken) string {
 
 func novaheaders(authtoken string) map[string]string {
 	headers := common.HEADERS
+	headers[common.CONTENT_TYPE] = common.APPLICATION_JSON
 	headers[common.X_OPENSTACK_NOVA_API_VERSION] = config.API_VERSION
 	headers[common.X_AUTH_TOKEN] = authtoken
 	return headers
@@ -57,7 +58,7 @@ func ForceDownAndComputeSrv(context *common.RespToken, authtoken string,
 		downctx = `{"forced_down": false}`
 	}
 
-	_, err = common.Put(base+"/os-services/"+srvid, headers, &downctx)
+	_, err = merak.Put(base+"/os-services/"+srvid, headers, &downctx)
 	return err
 }
 
@@ -72,7 +73,7 @@ func EvacuateVmOnHost(context *common.RespToken, authtoken string,
 
 	for _, id := range vms {
 		go func(vmid string) {
-			resp, err := common.Post(
+			resp, err := merak.Post(
 				base+"/servers/"+vmid+"/action", headers, &evaBody)
 			if nil != err || resp.StatusCode > 300 {
 				logging.LOG.Errorf("Failed to evacuate vm with uuid %s: %v\n", vmid, err)
@@ -92,7 +93,7 @@ func EvacuateVmOnHost(context *common.RespToken, authtoken string,
 func listVmOnHosts(url string, headers map[string]string, nodename string) []string {
 	srvurl := url + "/servers?all_tenants=1&status=active&host=" + nodename
 	logging.LOG.Infof("Request url is %s\n", srvurl)
-	resp, err := common.Get(srvurl, headers)
+	resp, err := merak.Get(srvurl, headers)
 	if nil != err {
 		logging.LOG.Errorf("Unexpected Error occured:%v\n", err)
 		return []string{}
@@ -119,7 +120,7 @@ func getServiceId(url string, headers map[string]string, nodename string) (strin
 	srv := url + "?binary=nova-compute&host=" + nodename
 	logging.LOG.Infof("Try to get the id of compute service on host %s using request url %s \n",
 		nodename, srv)
-	resp, err := common.Get(srv, headers)
+	resp, err := merak.Get(srv, headers)
 	if nil != err {
 		logging.LOG.Errorf("Unexpected Error occured:%v\n", err)
 		return "", err
