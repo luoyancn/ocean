@@ -23,7 +23,7 @@ func init() {
 }
 
 func set_rdo() {
-	viper.SetDefault("rdo.auth_url", "")
+	viper.SetDefault("rdo.auth_url", "http://127.0.0.1:35357/v3")
 	viper.SetDefault("rdo.os_region_name", "regione")
 	viper.SetDefault("rdo.project_domain_name", "default")
 	viper.SetDefault("rdo.project_name", "admin")

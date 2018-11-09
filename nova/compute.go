@@ -85,6 +85,7 @@ func EvacuateVmOnHost(context *common.RespToken, authtoken string,
 	}
 
 	for range vms {
+		<-evaReq
 	}
 
 	return nil
